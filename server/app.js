@@ -24,9 +24,10 @@ app.use(bodyParser.json());
 
 app.listen(port, () => console.log("listening port " + port));
 
-app.post("/url", async(req, resp) => {
+app.post("/url", async(req, res) => {
     try {
         if (!!urlServices.validateUrl(req.body.url)) {
+             console.log(req.body.url);
             return res.status(400).send({msg: "Niepoprawny url"});
         }
 
@@ -37,5 +38,15 @@ app.post("/url", async(req, resp) => {
         return res.status(200).send({shortUrl});
     } catch (error) {
         return res.status(500).send({msg: "Something went wrong. Please try again."});
+    }
+});
+
+app.get("/:shortUrlId", async (req, res) => {
+    try {
+        const url = await urlDb.find(req.params.shortUrlId);
+        return !url ? res.status(404).send("Not found") : res.redirect(301, url.longURL)
+
+    } catch (error) {
+        return res.status(500).send("Something went wrong. Please try again.")
     }
 });
