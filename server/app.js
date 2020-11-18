@@ -27,7 +27,6 @@ app.listen(port, () => console.log("listening port " + port));
 app.post("/url", async(req, res) => {
     try {
         if (!!urlServices.validateUrl(req.body.url)) {
-             console.log(req.body.url);
             return res.status(400).send({msg: "Niepoprawny url"});
         }
 
@@ -35,6 +34,8 @@ app.post("/url", async(req, res) => {
         const shortUrl = `http://${host}:${port}/${urlKey}`;
 
         await urlDb.save(req.body.url, shortUrl, urlKey)
+        console.log(shortUrl);
+
         return res.status(200).send({shortUrl});
     } catch (error) {
         return res.status(500).send({msg: "Something went wrong. Please try again."});
